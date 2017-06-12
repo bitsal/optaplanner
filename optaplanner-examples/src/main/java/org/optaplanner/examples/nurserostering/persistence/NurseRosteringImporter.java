@@ -16,6 +16,8 @@
 
 package org.optaplanner.examples.nurserostering.persistence;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.time.DayOfWeek;
@@ -59,8 +61,6 @@ import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
 import org.optaplanner.examples.nurserostering.domain.request.ShiftOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.ShiftOnRequest;
-
-import static java.time.temporal.ChronoUnit.*;
 
 public class NurseRosteringImporter extends AbstractXmlSolutionImporter<NurseRoster> {
 
@@ -597,21 +597,23 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter<NurseRos
                         ContractLineType.ALTERNATIVE_SKILL_CATEGORY);
                 contract.setContractLineList(contractLineListOfContract);
 
-                List<Element> unwantedPatternElementList = (List<Element>) element.getChild("UnwantedPatterns")
-                        .getChildren();
-                for (Element patternElement : unwantedPatternElementList) {
-                    assertElementName(patternElement, "Pattern");
-                    Pattern pattern = patternMap.get(patternElement.getText());
-                    if (pattern == null) {
-                        throw new IllegalArgumentException("The pattern (" + patternElement.getText()
-                                + ") of contract (" + contract.getCode() + ") does not exist.");
+                Element unwantedPatterns = element.getChild("UnwantedPatterns");
+                if (unwantedPatterns != null) {
+                    List<Element> unwantedPatternElementList = (List<Element>) unwantedPatterns.getChildren();
+                    for (Element patternElement : unwantedPatternElementList) {
+                        assertElementName(patternElement, "Pattern");
+                        Pattern pattern = patternMap.get(patternElement.getText());
+                        if (pattern == null) {
+                            throw new IllegalArgumentException("The pattern (" + patternElement.getText()
+                                    + ") of contract (" + contract.getCode() + ") does not exist.");
+                        }
+                        PatternContractLine patternContractLine = new PatternContractLine();
+                        patternContractLine.setId(patternContractLineId);
+                        patternContractLine.setContract(contract);
+                        patternContractLine.setPattern(pattern);
+                        patternContractLineList.add(patternContractLine);
+                        patternContractLineId++;
                     }
-                    PatternContractLine patternContractLine = new PatternContractLine();
-                    patternContractLine.setId(patternContractLineId);
-                    patternContractLine.setContract(contract);
-                    patternContractLine.setPattern(pattern);
-                    patternContractLineList.add(patternContractLine);
-                    patternContractLineId++;
                 }
 
                 contractList.add(contract);
@@ -630,6 +632,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter<NurseRos
         private long readBooleanContractLine(Contract contract, List<ContractLine> contractLineList,
                 List<ContractLine> contractLineListOfContract, long contractLineId, Element element,
                 ContractLineType contractLineType) throws DataConversionException {
+            if (element == null) {
+                return contractLineId;
+            }
+
             boolean enabled = Boolean.valueOf(element.getText());
             int weight;
             if (enabled) {
