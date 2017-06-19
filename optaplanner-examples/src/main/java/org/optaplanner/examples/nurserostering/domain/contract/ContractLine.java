@@ -22,8 +22,9 @@ import org.optaplanner.examples.common.domain.AbstractPersistable;
 
 @XStreamAlias("ContractLine")
 @XStreamInclude({
-        BooleanContractLine.class,
-        MinMaxContractLine.class
+    BooleanContractLine.class,
+    MinMaxContractLine.class,
+    MaxConsecutiveShiftsContractLine.class
 })
 public abstract class ContractLine extends AbstractPersistable {
 

@@ -17,6 +17,7 @@
 package org.optaplanner.examples.nurserostering.domain.contract;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
@@ -72,4 +73,20 @@ public class Contract extends AbstractPersistable {
         return weekendDefinition.getWeekendLength();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Contract contract = (Contract) o;
+        return Objects.equals(code, contract.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code);
+    }
 }

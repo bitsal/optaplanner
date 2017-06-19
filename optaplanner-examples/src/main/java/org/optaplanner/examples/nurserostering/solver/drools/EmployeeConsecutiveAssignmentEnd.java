@@ -24,6 +24,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.optaplanner.examples.nurserostering.domain.Employee;
 import org.optaplanner.examples.nurserostering.domain.ShiftDate;
+import org.optaplanner.examples.nurserostering.domain.ShiftType;
 import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 
@@ -31,10 +32,16 @@ public class EmployeeConsecutiveAssignmentEnd implements Comparable<EmployeeCons
 
     private Employee employee;
     private ShiftDate shiftDate;
+    private ShiftType shiftType;
 
     public EmployeeConsecutiveAssignmentEnd(Employee employee, ShiftDate shiftDate) {
         this.employee = employee;
         this.shiftDate = shiftDate;
+    }
+
+    public EmployeeConsecutiveAssignmentEnd(Employee employee, ShiftDate shiftDate, ShiftType shiftType) {
+        this(employee, shiftDate);
+        this.shiftType = shiftType;
     }
 
     public Employee getEmployee() {
@@ -53,6 +60,14 @@ public class EmployeeConsecutiveAssignmentEnd implements Comparable<EmployeeCons
         this.shiftDate = shiftDate;
     }
 
+    public ShiftType getShiftType() {
+        return shiftType;
+    }
+
+    public void setShiftType(ShiftType shiftType) {
+        this.shiftType = shiftType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -62,6 +77,7 @@ public class EmployeeConsecutiveAssignmentEnd implements Comparable<EmployeeCons
             return new EqualsBuilder()
                     .append(employee, other.employee)
                     .append(shiftDate, other.shiftDate)
+                    .append(shiftType, other.shiftType)
                     .isEquals();
         } else {
             return false;
@@ -73,6 +89,7 @@ public class EmployeeConsecutiveAssignmentEnd implements Comparable<EmployeeCons
         return new HashCodeBuilder()
                 .append(employee)
                 .append(shiftDate)
+                .append(shiftType)
                 .toHashCode();
     }
 

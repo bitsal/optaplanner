@@ -16,6 +16,8 @@
 
 package org.optaplanner.examples.nurserostering.domain;
 
+import java.util.Objects;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 
@@ -79,6 +81,23 @@ public class ShiftType extends AbstractPersistable {
 
     public String getLabel() {
         return code + " (" + description + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ShiftType shiftType = (ShiftType) o;
+        return Objects.equals(code, shiftType.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code);
     }
 
     @Override

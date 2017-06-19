@@ -50,6 +50,7 @@ import org.optaplanner.examples.nurserostering.domain.contract.BooleanContractLi
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
+import org.optaplanner.examples.nurserostering.domain.contract.MaxConsecutiveShiftsContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.PatternContractLine;
 import org.optaplanner.examples.nurserostering.domain.pattern.FreeBefore2DaysWithAWorkDayPattern;
@@ -616,6 +617,16 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter<NurseRos
                     }
                 }
 
+                Element maxConsecutiveShifts = element.getChild("MaxConsecutiveShiftsContractLines");
+                if (maxConsecutiveShifts != null) {
+                    List<Element> maxConsecutiveShiftLines = (List<Element>) maxConsecutiveShifts.getChildren();
+                    for (Element maxConsecutiveShiftLine : maxConsecutiveShiftLines) {
+                        contractLineList.add(
+                            readMaxConsecutiveShiftsContractLine(maxConsecutiveShiftLine, contract, contractLineId++)
+                        );
+                    }
+                }
+
                 contractList.add(contract);
                 if (contractMap.containsKey(contract.getCode())) {
                     throw new IllegalArgumentException("There are 2 contracts with the same code ("
@@ -627,6 +638,17 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter<NurseRos
             nurseRoster.setContractList(contractList);
             nurseRoster.setContractLineList(contractLineList);
             nurseRoster.setPatternContractLineList(patternContractLineList);
+        }
+
+        private MaxConsecutiveShiftsContractLine readMaxConsecutiveShiftsContractLine(Element maxConsecutiveShiftLine, Contract contract, long contractLineId) {
+            MaxConsecutiveShiftsContractLine maxConsecutiveShiftsContractLine = new MaxConsecutiveShiftsContractLine();
+            maxConsecutiveShiftsContractLine.setId(contractLineId);
+            maxConsecutiveShiftsContractLine.setContractLineType(ContractLineType.IDENTICAL_CONSECUTIVE_SHIFTS);
+            maxConsecutiveShiftsContractLine.setContract(contract);
+            maxConsecutiveShiftsContractLine.setShiftTypeId(maxConsecutiveShiftLine.getAttributeValue("shiftTypeId"));
+            maxConsecutiveShiftsContractLine.setMaxValue(Integer.valueOf(maxConsecutiveShiftLine.getText()));
+            maxConsecutiveShiftsContractLine.setWeight(Integer.valueOf(maxConsecutiveShiftLine.getAttributeValue("weight")));
+            return maxConsecutiveShiftsContractLine;
         }
 
         private long readBooleanContractLine(Contract contract, List<ContractLine> contractLineList,

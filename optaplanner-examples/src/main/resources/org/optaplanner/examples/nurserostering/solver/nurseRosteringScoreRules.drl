@@ -42,6 +42,7 @@ import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
 import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.PatternContractLine;
+import org.optaplanner.examples.nurserostering.domain.contract.MaxConsecutiveShiftsContractLine;
 import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
 import org.optaplanner.examples.nurserostering.domain.request.ShiftOffRequest;
@@ -128,12 +129,14 @@ rule "insertEmployeeWorkSequence"
         salience 1 // Do these rules first (optional, for performance)
     when
         EmployeeConsecutiveAssignmentStart(
+            shiftType == null,
             $employee : employee,
             $firstDayIndex : shiftDateDayIndex
         )
 
         EmployeeConsecutiveAssignmentEnd(
             employee == $employee,
+            shiftType == null,
             shiftDateDayIndex >= $firstDayIndex,
             $lastDayIndex : shiftDateDayIndex
         )
@@ -141,6 +144,7 @@ rule "insertEmployeeWorkSequence"
         // There are no free days between the first and last day
         not EmployeeConsecutiveAssignmentEnd(
             employee == $employee,
+            shiftType == null,
             shiftDateDayIndex >= $firstDayIndex && < $lastDayIndex
         )
     then
@@ -158,6 +162,7 @@ rule "minimumConsecutiveWorkingDays"
         EmployeeWorkSequence(
             getEmployee().getContract() == $contract,
             dayLength < $minimumValue,
+            shiftType == null,
             $dayLength : dayLength
         )
     then
@@ -174,6 +179,7 @@ rule "maximumConsecutiveWorkingDays"
 
         EmployeeWorkSequence(
             getEmployee().getContract() == $contract,
+            shiftType == null,
             dayLength > $maximumValue,
             $dayLength : dayLength
         )
@@ -474,6 +480,81 @@ rule "alternativeSkill"
         not SkillProficiency(employee == $employee, skill == $skill)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $contractLine.getWeight());
+end
+
+// Max consecutive shifts rules
+rule "max consecutive shifts: insert start"
+        salience 2 // Do these rules first (optional, for performance)
+    when
+        ShiftAssignment(
+            $employee : employee, employee != null,
+            $dayIndex : shiftDateDayIndex,
+            $shiftDate : shiftDate,
+            $shiftType : shiftType
+        )
+        // The first day has no working day before it with the same type
+        not ShiftAssignment(employee == $employee, shiftDateDayIndex == ($dayIndex - 1), shiftType == $shiftType)
+    then
+        insertLogical(new EmployeeConsecutiveAssignmentStart($employee, $shiftDate, $shiftType));
+end
+rule "max consecutive shifts: insert end"
+        salience 2 // Do these rules first (optional, for performance)
+    when
+        ShiftAssignment(
+            $employee : employee, employee != null,
+            $dayIndex : shiftDateDayIndex,
+            $shiftDate : shiftDate,
+            $shiftType : shiftType
+        )
+        // The last day has no working day after it
+        not ShiftAssignment(employee == $employee, shiftDateDayIndex == ($dayIndex + 1), shiftType == $shiftType)
+    then
+        insertLogical(new EmployeeConsecutiveAssignmentEnd($employee, $shiftDate, $shiftType));
+end
+rule "max consecutive shifts: insert employee work sequence"
+        salience 1 // Do these rules first (optional, for performance)
+    when
+        EmployeeConsecutiveAssignmentStart(
+            shiftType != null,
+            $employee : employee,
+            $firstDayIndex : shiftDateDayIndex,
+            $shiftType : shiftType
+        )
+
+        EmployeeConsecutiveAssignmentEnd(
+            employee == $employee,
+            shiftDateDayIndex >= $firstDayIndex,
+            shiftType == $shiftType,
+            $lastDayIndex : shiftDateDayIndex
+        )
+
+        // There are no free days between the first and last day
+        not EmployeeConsecutiveAssignmentEnd(
+            employee == $employee,
+            shiftType == $shiftType,
+            shiftDateDayIndex >= $firstDayIndex && < $lastDayIndex
+        )
+    then
+        insertLogical(new EmployeeWorkSequence($employee, $shiftType, $firstDayIndex, $lastDayIndex));
+end
+rule "max consecutive shifts"
+    when
+        $contractLine : MaxConsecutiveShiftsContractLine(
+            contractLineType == ContractLineType.IDENTICAL_CONSECUTIVE_SHIFTS,
+            enabled == true,
+            $shiftTypeCode : shiftTypeId,
+            $contract : contract
+        )
+        $employee : Employee(contract == $contract)
+        EmployeeWorkSequence(
+            employee == $employee,
+            shiftType != null,
+            shiftType.code == $shiftTypeCode,
+            lastDayIndex >= firstDayIndex + $contractLine.getMaxValue(),
+            $shiftsCount : (lastDayIndex - firstDayIndex + 1)
+        )
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, ($contractLine.getMaxValue() - $shiftsCount) * $contractLine.getWeight());
 end
 
 // Unwanted patterns

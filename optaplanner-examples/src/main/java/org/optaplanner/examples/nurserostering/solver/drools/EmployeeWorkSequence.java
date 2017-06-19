@@ -22,10 +22,12 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.optaplanner.examples.nurserostering.domain.Employee;
+import org.optaplanner.examples.nurserostering.domain.ShiftType;
 
 public class EmployeeWorkSequence implements Comparable<EmployeeWorkSequence>, Serializable {
 
     private Employee employee;
+    private ShiftType shiftType; // null means any type
     private int firstDayIndex;
     private int lastDayIndex;
 
@@ -35,12 +37,25 @@ public class EmployeeWorkSequence implements Comparable<EmployeeWorkSequence>, S
         this.lastDayIndex = lastDayIndex;
     }
 
+    public EmployeeWorkSequence(Employee employee, ShiftType shiftType, int firstDayIndex, int lastDayIndex) {
+        this(employee, firstDayIndex, lastDayIndex);
+        this.shiftType = shiftType;
+    }
+
     public Employee getEmployee() {
         return employee;
     }
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    public ShiftType getShiftType() {
+        return shiftType;
+    }
+
+    public void setShiftType(ShiftType shiftType) {
+        this.shiftType = shiftType;
     }
 
     public int getFirstDayIndex() {
@@ -67,6 +82,7 @@ public class EmployeeWorkSequence implements Comparable<EmployeeWorkSequence>, S
             EmployeeWorkSequence other = (EmployeeWorkSequence) o;
             return new EqualsBuilder()
                     .append(employee, other.employee)
+                    .append(shiftType, other.shiftType)
                     .append(firstDayIndex, other.firstDayIndex)
                     .append(lastDayIndex, other.lastDayIndex)
                     .isEquals();
@@ -79,6 +95,7 @@ public class EmployeeWorkSequence implements Comparable<EmployeeWorkSequence>, S
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(employee)
+                .append(shiftType)
                 .append(firstDayIndex)
                 .append(lastDayIndex)
                 .toHashCode();

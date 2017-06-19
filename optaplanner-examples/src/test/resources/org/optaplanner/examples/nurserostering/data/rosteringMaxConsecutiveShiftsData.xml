@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<SchedulingPeriod ID="test" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:noNamespaceSchemaLocation="../../../../../../../../data/nurserostering/import/competition.xsd">
+
+  <StartDate>2017-06-01</StartDate>
+  <EndDate>2017-06-10</EndDate>
+
+  <Skills>
+    <Skill>Nurse</Skill>
+  </Skills>
+
+  <ShiftTypes>
+    <Shift ID="L">
+      <StartTime>08:00:00</StartTime>
+      <EndTime>21:00:00</EndTime>
+      <Description>Long Day</Description>
+      <Skills>
+        <Skill>Nurse</Skill>
+      </Skills>
+    </Shift>
+    <Shift ID="DM">
+      <StartTime>08:00:00</StartTime>
+      <EndTime>18:00:00</EndTime>
+      <Description>Day MAU</Description>
+      <Skills>
+        <Skill>Nurse</Skill>
+      </Skills>
+    </Shift>
+    <Shift ID="ACE">
+      <StartTime>08:30:00</StartTime>
+      <EndTime>16:30:00</EndTime>
+      <Description>Amb Care (Early)</Description>
+      <Skills>
+        <Skill>Nurse</Skill>
+      </Skills>
+    </Shift>
+    <Shift ID="ACM">
+      <StartTime>12:30:00</StartTime>
+      <EndTime>20:30:00</EndTime>
+      <Description>Amb Care (Middle)</Description>
+      <Skills>
+        <Skill>Nurse</Skill>
+      </Skills>
+    </Shift>
+    <Shift ID="ACW">
+      <StartTime>09:00:00</StartTime>
+      <EndTime>17:00:00</EndTime>
+      <Description>Amb Care Weekend</Description>
+      <Skills>
+        <Skill>Nurse</Skill>
+      </Skills>
+    </Shift>
+    <Shift ID="N">
+      <StartTime>20:30:00</StartTime>
+      <EndTime>08:30:00</EndTime>
+      <Description>Night</Description>
+      <Skills>
+        <Skill>Nurse</Skill>
+      </Skills>
+    </Shift>
+  </ShiftTypes>
+
+  <Contracts>
+    <Contract ID="1">
+      <Description>Full Time</Description>
+
+      <WeekendDefinition>SaturdaySunday</WeekendDefinition>
+      <CompleteWeekends weight="1">true</CompleteWeekends>
+      
+      <MaxConsecutiveShiftsContractLines>
+        <!-- max consecutive long shifts (L) = 5 -->
+        <MaxConsecutiveShifts shiftTypeId="L" weight="50">5</MaxConsecutiveShifts>
+        <!-- max consecutive night shifts (N) = 4 -->
+        <MaxConsecutiveShifts shiftTypeId="N" weight="30">4</MaxConsecutiveShifts>
+        <!-- max consecutive late shifts (ACM???) = 4 -->
+        <MaxConsecutiveShifts shiftTypeId="ACM" weight="20">4</MaxConsecutiveShifts>
+      </MaxConsecutiveShiftsContractLines>
+    </Contract>
+  </Contracts>
+
+  <Employees>
+    <Employee ID="A">
+      <ContractID>1</ContractID>
+      <Name>A</Name>
+      <Skills>
+        <Skill>Nurse</Skill>
+      </Skills>
+    </Employee>
+  </Employees>
+
+  <CoverRequirements>
+    <DayOfWeekCover>
+      <Day>Monday</Day>
+      <Cover>
+        <Shift>L</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>DM</Shift>
+        <Preferred>4</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACE</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACM</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>N</Shift>
+        <Preferred>2</Preferred>
+      </Cover>
+    </DayOfWeekCover>
+    <DayOfWeekCover>
+      <Day>Tuesday</Day>
+      <Cover>
+        <Shift>L</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>DM</Shift>
+        <Preferred>4</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACE</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACM</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>N</Shift>
+        <Preferred>2</Preferred>
+      </Cover>
+    </DayOfWeekCover>
+    <DayOfWeekCover>
+      <Day>Wednesday</Day>
+      <Cover>
+        <Shift>L</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>DM</Shift>
+        <Preferred>4</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACE</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACM</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>N</Shift>
+        <Preferred>2</Preferred>
+      </Cover>
+    </DayOfWeekCover>
+    <DayOfWeekCover>
+      <Day>Thursday</Day>
+      <Cover>
+        <Shift>L</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>DM</Shift>
+        <Preferred>4</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACE</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACM</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>N</Shift>
+        <Preferred>2</Preferred>
+      </Cover>
+    </DayOfWeekCover>
+    <DayOfWeekCover>
+      <Day>Friday</Day>
+      <Cover>
+        <Shift>L</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>DM</Shift>
+        <Preferred>4</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACE</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACM</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>N</Shift>
+        <Preferred>2</Preferred>
+      </Cover>
+    </DayOfWeekCover>
+    <DayOfWeekCover>
+      <Day>Saturday</Day>
+      <Cover>
+        <Shift>DM</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACW</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>N</Shift>
+        <Preferred>2</Preferred>
+      </Cover>
+    </DayOfWeekCover>
+    <DayOfWeekCover>
+      <Day>Sunday</Day>
+      <Cover>
+        <Shift>L</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>ACW</Shift>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
+        <Shift>N</Shift>
+        <Preferred>2</Preferred>
+      </Cover>
+    </DayOfWeekCover>
+  </CoverRequirements>
+</SchedulingPeriod>
